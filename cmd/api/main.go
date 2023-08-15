@@ -9,10 +9,9 @@ import (
 
 func main() {
 	const headlessURL = "https://storefront-admin.yalochat.dev/v3/admin/storefronts"
-	productRepo := product.NewProductRepository(headlessURL)
-	productService := product.NewSearcher(productRepo)
+	productRepo := product.NewGraphQLRepository(headlessURL)
 
-	handler := product.NewHandler(productService)
+	handler := product.NewHandler(productRepo)
 	router := gin.Default()
 	router.GET("/products", handler.SearchProducts)
 

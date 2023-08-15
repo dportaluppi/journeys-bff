@@ -8,8 +8,8 @@ type Product struct {
 	Description string   `json:"description"`
 	SKU         string   `json:"sku"`
 	Category    string   `json:"category"`
-	// PrioritizeAt string   `json:"prioritizeAt"`
-	// ExcludedAt   string   `json:"excludedAt"`
+	// PrioritizeAt string   `json:"prioritizeAt"` TODO: Uncomment when the field is available
+	// ExcludedAt   string   `json:"excludedAt"` TODO: Uncomment when the field is available
 }
 
 type SearchResult struct {
@@ -31,8 +31,4 @@ type Filter struct {
 }
 type Searcher interface {
 	Search(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (SearchResult, error)
-}
-
-type Repository interface {
-	Searcher
 }
