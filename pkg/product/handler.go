@@ -1,17 +1,16 @@
 package product
 
 import (
-	"github.com/dportaluppi/journeys-bff/pkg/recommendations"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
 type handler struct {
-	searcher recommendations.Searcher
+	searcher Searcher
 }
 
-func NewHandler(productService recommendations.Searcher) *handler {
+func NewHandler(productService Searcher) *handler {
 	return &handler{searcher: productService}
 }
 
@@ -30,7 +29,7 @@ func (h *handler) SearchProducts(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	f := &recommendations.Filter{
+	f := &Filter{
 		Storefront: storefront,
 		Name:       query,
 	}

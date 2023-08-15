@@ -2,7 +2,6 @@ package product
 
 import (
 	"context"
-	"github.com/dportaluppi/journeys-bff/pkg/recommendations"
 	"github.com/machinebox/graphql"
 )
 
@@ -15,7 +14,7 @@ func NewProductRepository(endpoint string) *repository {
 	return &repository{graphQLClient: client}
 }
 
-func (r *repository) Search(ctx context.Context, filter *recommendations.Filter, pageSize int, pageNumber int) (recommendations.SearchResult, error) {
+func (r *repository) Search(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (SearchResult, error) {
 	req := graphql.NewRequest(`
 		query GetProducts($storefrontName: String!, $pagination: PaginationInput, $filter: FilterProductInput) {
 			getProducts(storefrontName: $storefrontName, pagination: $pagination, filter: $filter) {
@@ -50,16 +49,16 @@ func (r *repository) Search(ctx context.Context, filter *recommendations.Filter,
 
 	var resp struct {
 		GetProducts struct {
-			Products   []recommendations.Product `json:"products"`
-			Pagination recommendations.Metadata  `json:"pagination"`
+			Products   []Product `json:"products"`
+			Pagination Metadata  `json:"pagination"`
 		} `json:"getProducts"`
 	}
 
 	if err := r.graphQLClient.Run(ctx, req, &resp); err != nil {
-		return recommendations.SearchResult{}, err
+		return SearchResult{}, err
 	}
 
-	searchResult := recommendations.SearchResult{
+	searchResult := SearchResult{
 		Data:     resp.GetProducts.Products,
 		Metadata: resp.GetProducts.Pagination,
 	}

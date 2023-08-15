@@ -1,4 +1,4 @@
-package recommendations
+package product
 
 import (
 	"context"
