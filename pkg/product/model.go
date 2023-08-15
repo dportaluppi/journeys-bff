@@ -8,8 +8,6 @@ type Product struct {
 	Description string   `json:"description"`
 	SKU         string   `json:"sku"`
 	Category    string   `json:"category"`
-	// PrioritizeAt string   `json:"prioritizeAt"` TODO: Uncomment when the field is available
-	// ExcludedAt   string   `json:"excludedAt"` TODO: Uncomment when the field is available
 }
 
 type SearchResult struct {
@@ -28,6 +26,8 @@ type Metadata struct {
 type Filter struct {
 	Storefront string
 	Name       string
+	SKU        string
+	Category   string
 }
 type Searcher interface {
 	Search(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (SearchResult, error)

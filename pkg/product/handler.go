@@ -17,22 +17,25 @@ func NewHandler(productService Searcher) *handler {
 func (h *handler) SearchProducts(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	query := c.Query("searchTerm")
-	storefront := c.Query("storefront")
+	f := &Filter{
+		Storefront: c.Query("storefront"),
+		Name:       c.Query("name"),
+		Category:   c.Query("category"),
+		SKU:        c.Query("sku"),
+	}
 
 	pageSize, err := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
 	pageNumber, err := strconv.Atoi(c.DefaultQuery("pageNumber", "1"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	f := &Filter{
-		Storefront: storefront,
-		Name:       query,
-	}
 	result, err := h.searcher.Search(ctx, f, pageSize, pageNumber)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

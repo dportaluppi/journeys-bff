@@ -1,4 +1,4 @@
-package audience
+package segment
 
 import (
 	"context"
@@ -17,8 +17,8 @@ func NewHTTPAudienceRepo(baseURL, token string) *HTTPAudienceRepo {
 	return &HTTPAudienceRepo{baseURL: baseURL, token: token}
 }
 
-func (repo *HTTPAudienceRepo) GetAudiences(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (*AudiencesResponse, error) {
-	var repoResponse RepoAudiencesResponse
+func (repo *HTTPAudienceRepo) GetSegments(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (*SegmentsResponse, error) {
+	var repoResponse RepoSegmentsResponse
 
 	url := repo.baseURL + fmt.Sprintf("?provider=%s&page=%d&pageSize=%d", filter.Provider, pageNumber, pageSize)
 	if filter.Query != "" {
@@ -52,14 +52,14 @@ func (repo *HTTPAudienceRepo) GetAudiences(ctx context.Context, filter *Filter, 
 		return nil, err
 	}
 
-	domainAudiences := make([]Audience, len(repoResponse.Data))
+	domainAudiences := make([]Segment, len(repoResponse.Data))
 	totalCustomers := 0
 	for i, repoAud := range repoResponse.Data {
 		domainAudiences[i] = toDomain(repoAud)
 		totalCustomers += domainAudiences[i].LastGeneratedSize
 	}
 
-	response := &AudiencesResponse{
+	response := &SegmentsResponse{
 		Data: Data{
 			Audiences: domainAudiences,
 			Customers: CustomersInfo{Total: totalCustomers},
@@ -70,23 +70,33 @@ func (repo *HTTPAudienceRepo) GetAudiences(ctx context.Context, filter *Filter, 
 	return response, nil
 }
 
-func toDomain(repoAud RepoAudience) Audience {
-	return Audience{
-		ID:   repoAud.ID,
-		Name: repoAud.Name,
-		Filters: AudienceFilters{
-			CustomerAttributesFilter: fmt.Sprintf("%v", repoAud.Filters.CustomerAttributesFilter),
-			EventsFilter:             fmt.Sprintf("%v", repoAud.Filters.EventsFilter),
+func toDomain(segmentAud RepoSegment) Segment {
+	customerAttributesFilterJSON, err := json.Marshal(segmentAud.Filters.CustomerAttributesFilter)
+	if err != nil {
+		// TODO: log error
+	}
+
+	eventsFilterJSON, err := json.Marshal(segmentAud.Filters.EventsFilter)
+	if err != nil {
+		// TODO: log error
+	}
+
+	return Segment{
+		ID:   segmentAud.ID,
+		Name: segmentAud.Name,
+		Filters: SegmentFilters{
+			CustomerAttributesFilter: string(customerAttributesFilterJSON),
+			EventsFilter:             string(eventsFilterJSON),
 		},
-		Tags:              repoAud.Tags,
-		LastGeneratedSize: repoAud.LastGeneratedSize,
-		UpdatedAt:         repoAud.UpdatedAt,
+		Tags:              segmentAud.Tags,
+		LastGeneratedSize: segmentAud.LastGeneratedSize,
+		UpdatedAt:         segmentAud.UpdatedAt,
 	}
 }
 
 // --------- Repository model -------------
 
-type RepoAudience struct {
+type RepoSegment struct {
 	ID                string      `json:"id"`
 	Provider          string      `json:"provider"`
 	Name              string      `json:"name"`
@@ -102,7 +112,7 @@ type RepoFilters struct {
 	EventsFilter             map[string]interface{} `json:"eventsFilter"`
 }
 
-type RepoAudiencesResponse struct {
-	Data     []RepoAudience `json:"data"`
-	Metadata Metadata       `json:"metadata"`
+type RepoSegmentsResponse struct {
+	Data     []RepoSegment `json:"data"`
+	Metadata Metadata      `json:"metadata"`
 }

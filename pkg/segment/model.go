@@ -1,17 +1,17 @@
-package audience
+package segment
 
 import "context"
 
-type Audience struct {
-	ID                string          `json:"id"`
-	Name              string          `json:"name"`
-	Filters           AudienceFilters `json:"filters"`
-	Tags              []string        `json:"tags"`
-	LastGeneratedSize int             `json:"lastGeneratedSize"`
-	UpdatedAt         string          `json:"updatedAt"`
+type Segment struct {
+	ID                string         `json:"id"`
+	Name              string         `json:"name"`
+	Filters           SegmentFilters `json:"filters"`
+	Tags              []string       `json:"tags"`
+	LastGeneratedSize int            `json:"lastGeneratedSize"`
+	UpdatedAt         string         `json:"lastGeneratedAt"`
 }
 
-type AudienceFilters struct {
+type SegmentFilters struct {
 	CustomerAttributesFilter string `json:"customerAttributesFilter"`
 	EventsFilter             string `json:"eventsFilter"`
 }
@@ -28,11 +28,11 @@ type Metadata struct {
 }
 
 type Data struct {
-	Audiences []Audience    `json:"audiences"`
+	Audiences []Segment     `json:"audiences"`
 	Customers CustomersInfo `json:"customers"`
 }
 
-type AudiencesResponse struct {
+type SegmentsResponse struct {
 	Data     Data     `json:"data"`
 	Metadata Metadata `json:"metadata"`
 }
@@ -43,5 +43,5 @@ type Filter struct {
 }
 
 type Getter interface {
-	GetAudiences(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (*AudiencesResponse, error)
+	GetSegments(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (*SegmentsResponse, error)
 }

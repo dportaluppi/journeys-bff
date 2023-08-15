@@ -42,10 +42,22 @@ func (r *repository) Search(ctx context.Context, filter *Filter, pageSize int, p
 		"pageNumber": pageNumber,
 		"pageSize":   pageSize,
 	})
-	req.Var("filter", map[string]interface{}{
+
+	filterMap := map[string]interface{}{
 		"isActive": true,
-		"name":     filter.Name,
-	})
+	}
+
+	if filter.Name != "" {
+		filterMap["name"] = filter.Name
+	}
+	if filter.SKU != "" {
+		filterMap["sku"] = filter.SKU
+	}
+	if filter.Category != "" {
+		filterMap["category"] = filter.Category
+	}
+
+	req.Var("filter", filterMap)
 
 	var resp struct {
 		GetProducts struct {

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/dportaluppi/journeys-bff/pkg/audience"
 	"github.com/dportaluppi/journeys-bff/pkg/product"
+	"github.com/dportaluppi/journeys-bff/pkg/segment"
 	"github.com/gin-gonic/gin"
 	"log"
 )
@@ -18,9 +18,9 @@ func main() {
 	const audienceToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJZYWxvQXBpS2V5IiwieWlkIjoiMjUxIiwieXQiOiJjb25zdW1lciJ9.PKgWMQnr9oJVvtVOvsTPK95HzfPVA6pFLMqtL8cDJEk"
 	const audienceURL = "https://api2-staging.yalochat.com/customers-api/v1/filter-ruleset"
 
-	audienceRepo := audience.NewHTTPAudienceRepo(audienceURL, audienceToken)
-	audienceHandler := audience.NewHandler(audienceRepo)
-	router.GET("/audiences", audienceHandler.GetAudiences)
+	audienceRepo := segment.NewHTTPAudienceRepo(audienceURL, audienceToken)
+	audienceHandler := segment.NewHandler(audienceRepo)
+	router.GET("/segments", audienceHandler.GetSegments)
 
 	log.Fatal(router.Run(":8061"))
 }
