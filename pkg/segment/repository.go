@@ -13,7 +13,7 @@ type HTTPAudienceRepo struct {
 	token   string
 }
 
-func NewHTTPAudienceRepo(baseURL, token string) *HTTPAudienceRepo {
+func NewHTTPRepo(baseURL, token string) *HTTPAudienceRepo {
 	return &HTTPAudienceRepo{baseURL: baseURL, token: token}
 }
 

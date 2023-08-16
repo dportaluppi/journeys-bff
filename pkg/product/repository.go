@@ -9,7 +9,7 @@ type repository struct {
 	graphQLClient *graphql.Client
 }
 
-func NewGraphQLRepository(endpoint string) *repository {
+func NewGraphQLRepo(endpoint string) *repository {
 	client := graphql.NewClient(endpoint)
 	return &repository{graphQLClient: client}
 }

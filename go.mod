@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/machinebox/graphql v0.2.2
+	go.mongodb.org/mongo-driver v1.12.1
 )
 
 require (
