@@ -24,9 +24,11 @@ func main() {
 	const journeysURL = "http://localhost:8060/accounts/"
 	const journeysToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0VGk5amthVldha0J3Q2hvYnRHOTRmWEpHUjZ1NjRhTiJ9.YWuWwltEdyqtpTor_AQjC_-YmdcqTgw2WvQcKpEOfwo"
 	journeyRepo := journey.NewHTTPRepo(journeysURL, journeysToken)
-	journeyService := journey.NewService(journeyRepo)
+	journeyService := journey.NewService(journeyRepo, productRepo, audienceRepo)
 	journeyHandler := journey.NewHandler(journeyService)
 	router.POST("/accounts/:accountId/journeys", journeyHandler.CreateJourney)
+	router.GET("/accounts/:accountId/journeys", journeyHandler.GetJourneys)
+	router.GET("/accounts/:accountId/journeys/:journeyId", journeyHandler.GetJourneyByID)
 
 	log.Fatal(router.Run(":8061"))
 }

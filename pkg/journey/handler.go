@@ -8,6 +8,8 @@ import (
 
 type Handler interface {
 	CreateJourney(c *gin.Context)
+	GetJourneys(c *gin.Context)
+	GetJourneyByID(c *gin.Context)
 }
 
 type handler struct {
@@ -19,7 +21,7 @@ func NewHandler(s Service) Handler {
 }
 
 func (h *handler) CreateJourney(c *gin.Context) {
-	var j Journey
+	var j JourneyWriteModel
 
 	if err := c.ShouldBindJSON(&j); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -34,4 +36,29 @@ func (h *handler) CreateJourney(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, newJourney)
+}
+
+func (h *handler) GetJourneys(c *gin.Context) {
+	accountId := c.Param("accountId")
+
+	journeys, err := h.service.GetJourneys(c.Request.Context(), accountId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, journeys)
+}
+
+func (h *handler) GetJourneyByID(c *gin.Context) {
+	accountId := c.Param("accountId")
+	journeyID := c.Param("journeyId")
+
+	journey, err := h.service.GetJourneyByID(c.Request.Context(), accountId, journeyID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, journey)
 }

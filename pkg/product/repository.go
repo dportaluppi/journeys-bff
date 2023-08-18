@@ -3,10 +3,24 @@ package product
 import (
 	"context"
 	"github.com/machinebox/graphql"
+	"github.com/pkg/errors"
 )
+
+var ErrProductNotFound = errors.New("product not found")
 
 type repository struct {
 	graphQLClient *graphql.Client
+}
+
+func (r *repository) GetBySKU(ctx context.Context, storefront, sku string) (Product, error) {
+	sr, err := r.Search(ctx, &Filter{SKU: sku, Storefront: storefront}, 1, 1)
+	if err != nil {
+		return Product{}, err
+	}
+	if sr.Metadata.Total == 0 {
+		return Product{}, ErrProductNotFound
+	}
+	return sr.Data[0], nil
 }
 
 func NewGraphQLRepo(endpoint string) *repository {

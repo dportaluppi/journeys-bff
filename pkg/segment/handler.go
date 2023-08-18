@@ -17,8 +17,9 @@ func NewHandler(audienceService Getter) *handler {
 func (h *handler) GetSegments(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	query := c.Query("name")
 	provider := c.Query("provider")
+	name := c.Query("name")
+	id := c.Query("id")
 
 	pageSize, err := strconv.Atoi(c.DefaultQuery("size", "10"))
 	if err != nil {
@@ -33,7 +34,8 @@ func (h *handler) GetSegments(c *gin.Context) {
 
 	f := &Filter{
 		Provider: provider,
-		Query:    query,
+		Name:     name,
+		ID:       id,
 	}
 	result, err := h.getter.GetSegments(ctx, f, pageSize, pageNumber)
 	if err != nil {

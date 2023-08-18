@@ -31,4 +31,5 @@ type Filter struct {
 }
 type Searcher interface {
 	Search(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (SearchResult, error)
+	GetBySKU(ctx context.Context, storefront, sku string) (Product, error)
 }

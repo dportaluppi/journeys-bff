@@ -1,6 +1,8 @@
 package journey
 
 import (
+	"github.com/dportaluppi/journeys-bff/pkg/product"
+	"github.com/dportaluppi/journeys-bff/pkg/segment"
 	"time"
 )
 
@@ -11,20 +13,38 @@ type Experience struct {
 	EnabledAt    time.Time              `json:"enabledAt"`
 }
 
-type Recommendations struct {
-	AllowList []string `json:"allowList"`
-	DenyList  []string `json:"denyList"`
+type RecommendationsWriteModel struct {
+	AllowList   []string `json:"allowList"`
+	ExcludeList []string `json:"excludeList"`
 }
 
-type Journey struct {
-	ID              string          `json:"journeyId"`
-	AccountID       string          `json:"accountId"`
-	Type            string          `json:"type"`
-	Experiences     []Experience    `json:"experiences"`
-	BotID           string          `json:"botId"`
-	Storefront      string          `json:"storefront"`
-	Audiences       []string        `json:"audiences"`
-	Recommendations Recommendations `json:"recommendations"`
-	StartAt         time.Time       `json:"startAt"`
-	EndAt           time.Time       `json:"endAt"`
+type JourneyWriteModel struct {
+	ID              string                    `json:"journeyId"`
+	AccountID       string                    `json:"accountId"`
+	Type            string                    `json:"type"`
+	Experiences     []Experience              `json:"experiences"`
+	BotID           string                    `json:"botId"`
+	Storefront      string                    `json:"storefront"`
+	Audiences       []string                  `json:"audiences"`
+	Recommendations RecommendationsWriteModel `json:"recommendations"`
+	StartAt         time.Time                 `json:"startAt"`
+	EndAt           time.Time                 `json:"endAt"`
+}
+
+type RecommendationsReadModel struct {
+	AllowList   []product.Product `json:"allowList"`
+	ExcludeList []product.Product `json:"excludeList"`
+}
+
+type JourneyReadModel struct {
+	ID              string                   `json:"journeyId"`
+	AccountID       string                   `json:"accountId"`
+	Type            string                   `json:"type"`
+	Experiences     []Experience             `json:"experiences"`
+	BotID           string                   `json:"botId"`
+	Storefront      string                   `json:"storefront"`
+	Audiences       []segment.Segment        `json:"audiences"`
+	Recommendations RecommendationsReadModel `json:"recommendations"`
+	StartAt         time.Time                `json:"startAt"`
+	EndAt           time.Time                `json:"endAt"`
 }

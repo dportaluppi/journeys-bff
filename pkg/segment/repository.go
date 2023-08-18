@@ -4,9 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"io"
 	"net/http"
 )
+
+var ErrSegmentNotFound = errors.New("segment not found")
 
 type HTTPAudienceRepo struct {
 	baseURL string
@@ -21,8 +24,12 @@ func (repo *HTTPAudienceRepo) GetSegments(ctx context.Context, filter *Filter, p
 	var repoResponse RepoSegmentsResponse
 
 	url := repo.baseURL + fmt.Sprintf("?provider=%s&page=%d&pageSize=%d", filter.Provider, pageNumber, pageSize)
-	if filter.Query != "" {
-		url += "&name=" + filter.Query
+	if filter.Name != "" {
+		url += "&name=" + filter.Name
+	}
+
+	if filter.ID != "" {
+		url += "&id=" + filter.ID
 	}
 
 	client := &http.Client{}
@@ -68,6 +75,44 @@ func (repo *HTTPAudienceRepo) GetSegments(ctx context.Context, filter *Filter, p
 	}
 
 	return response, nil
+}
+
+func (repo *HTTPAudienceRepo) GetByID(ctx context.Context, filter *Filter) (Segment, error) {
+	url := fmt.Sprintf("%s/%s?provider=%s", repo.baseURL, filter.ID, filter.Provider)
+
+	client := &http.Client{}
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return Segment{}, err
+	}
+
+	req.Header.Add("Authorization", "Bearer "+repo.token)
+	resp, err := client.Do(req)
+	if err != nil {
+		return Segment{}, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusNotFound {
+			return Segment{}, ErrSegmentNotFound
+		}
+
+		return Segment{}, fmt.Errorf("failed with status: %d", resp.StatusCode)
+	}
+
+	var repoSegment RepoSegment
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return Segment{}, err
+	}
+
+	err = json.Unmarshal(bodyBytes, &repoSegment)
+	if err != nil {
+		return Segment{}, err
+	}
+
+	return toDomain(repoSegment), nil
 }
 
 func toDomain(segmentAud RepoSegment) Segment {

@@ -39,9 +39,11 @@ type SegmentsResponse struct {
 
 type Filter struct {
 	Provider string
-	Query    string
+	Name     string
+	ID       string
 }
 
 type Getter interface {
 	GetSegments(ctx context.Context, filter *Filter, pageSize int, pageNumber int) (*SegmentsResponse, error)
+	GetByID(ctx context.Context, filter *Filter) (Segment, error)
 }
