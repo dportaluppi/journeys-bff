@@ -27,9 +27,7 @@ func NewService(journeyRepo Repository, productRepo product.Searcher, segmentRep
 func (s *service) CreateJourney(ctx context.Context, j *JourneyWriteModel) (*JourneyWriteModel, error) {
 	// TODO: add business logic here
 	// validate journey: audiences, products, storefront, botId, startAt, endAt
-	// validate account
-	// validate segments or audiences: if id is `*` then we don't need to validate
-	// validate products: if id is `*` then we don't need to validate.
+	// review selection strategy for all products and all users.
 
 	// generate experiences ids
 	for i := range j.Experiences {

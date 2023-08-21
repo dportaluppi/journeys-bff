@@ -28,10 +28,6 @@ func (repo *HTTPAudienceRepo) GetSegments(ctx context.Context, filter *Filter, p
 		url += "&name=" + filter.Name
 	}
 
-	if filter.ID != "" {
-		url += "&id=" + filter.ID
-	}
-
 	client := &http.Client{}
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
@@ -69,7 +65,7 @@ func (repo *HTTPAudienceRepo) GetSegments(ctx context.Context, filter *Filter, p
 	response := &SegmentsResponse{
 		Data: Data{
 			Audiences: domainAudiences,
-			Customers: CustomersInfo{Total: totalCustomers},
+			Customers: CustomersInfo{Total: totalCustomers}, // TODO: get total customers from new endpoint
 		},
 		Metadata: repoResponse.Metadata,
 	}
